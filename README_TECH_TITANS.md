@@ -11,6 +11,35 @@ This is a simple **Snake Game** written in **C++** that runs in a Windows consol
 - **Score**: The score increases as the snake eats food.
 - **Console-based**: The game runs in a Windows console window.
 
+## Analysed Data Structure
+
+# Object Structure
+# Snake Object Structure:
+The snake is represented using a linked list of SnakeNode objects. Each SnakeNode holds a Point object representing the coordinates of a segment of the snake's body. The Snake class manages this list, with the head of the snake pointing to the first node, and each node pointing to the next segment. The last node in the list points to nullptr, marking the end of the snake. This linked list structure allows the snake to move and grow dynamically, as new nodes are added to the tail when the snake eats food.
+
+# Board Object Structure:
+The Board class represents the game area. It contains a grid that tracks the game state and a Snake object to manage the snake’s position and movement. It also keeps a Point object for the food’s position, which is randomly placed on the grid. The Board class is responsible for updating the grid, handling user input, and keeping track of the score. It redraws the grid each frame, places new food when eaten, and updates the score accordingly.
+
+How the Objects Work Together
+Initialization: The game begins with the Board class initializing the grid, creating the snake (starting with 3 segments), and placing the first food on the grid at a random location.
+
+User Input: The Board listens for WASD key presses, which change the snake’s direction. The snake’s movement is then updated based on the new direction.
+
+Game Loop: The game runs continuously, where the Board class:
+
+Updates the snake's movement by calling the move function of the Snake class.
+Redraws the grid with the updated positions of the snake and food.
+Increases the score and grows the snake when it eats food.
+Ends the game if the snake collides with a wall or itself.
+# Conclusion
+The game uses several key data structures:
+
+Point: Represents coordinates for the snake and food.
+SnakeNode: Represents each segment of the snake’s body in the linked list.
+Snake: Manages the snake's movement, direction, and growth.
+Board: Manages the grid, handles input, tracks the game state, and displays the score.
+By using a linked list for the snake’s body, the game allows for dynamic movement and growth, making it easier to manage the snake’s length as the game progresses. The structure of these objects ensures efficient handling of game mechanics, including input processing, collision detection, and updating the game display
+
 ## How to Run
 
 ### Prerequisites
