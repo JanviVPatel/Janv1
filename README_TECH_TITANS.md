@@ -29,7 +29,7 @@ This is a simple **Snake Game** written in **C++** that runs in a Windows consol
 2. **Navigate to the project folder**:
 
     ```bash
-    cd snake-game
+    cd tech_titans
     ```
 
 3. **Compile the code**:
