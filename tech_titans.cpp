@@ -10,7 +10,7 @@ const char DIR_LEFT = 'L';
 const char DIR_RIGHT = 'R';
 
 // Grid size constants
-const int GRID_WIDTH = 40;
+const int GRID_WIDTH = 100;
 const int GRID_HEIGHT = 20;
 
 struct Point {
@@ -266,7 +266,7 @@ int main() {
     while (board->update()) {
         board->getInput();
         board->draw();
-        Sleep(200);
+        Sleep(150);
     }
 
     cout << "\nGame Over!" << endl;
