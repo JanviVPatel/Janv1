@@ -94,6 +94,7 @@ This project is open-source and available under the [MIT License](LICENSE).
 Enjoy playing the game, and feel free to modify the code as you wish!
 
 ## Group Name
+
 TECH TITANS
 
 ## Group Member's Name
