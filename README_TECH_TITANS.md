@@ -23,9 +23,9 @@ The Board class represents the game area. It contains a grid that tracks the gam
 # How the Objects Work Together
 Initialization: The game begins with the Board class initializing the grid, creating the snake (starting with 3 segments), and placing the first food on the grid at a random location.
 
-# User Input: The Board listens for WASD key presses, which change the snake’s direction. The snake’s movement is then updated based on the new direction.
+User Input: The Board listens for WASD key presses, which change the snake’s direction. The snake’s movement is then updated based on the new direction.
 
-# Game Loop: The game runs continuously, where the Board class:
+Game Loop: The game runs continuously, where the Board class:
 
 Updates the snake's movement by calling the move function of the Snake class.
 Redraws the grid with the updated positions of the snake and food.
