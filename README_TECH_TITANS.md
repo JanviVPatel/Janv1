@@ -37,7 +37,7 @@ This is a simple **Snake Game** written in **C++** that runs in a Windows consol
     If using `g++` (MinGW or similar), run:
 
     ```bash
-    g++ -o snake_game main.cpp
+    g++ -o tech_titans.cpp
     ```
 
     Or if using Visual Studio, open the project in Visual Studio and build the solution.
@@ -47,7 +47,7 @@ This is a simple **Snake Game** written in **C++** that runs in a Windows consol
     On the command line:
 
     ```bash
-    ./snake_game
+    ./tech_titans
     ```
 
     The game will open in a Windows console window.
