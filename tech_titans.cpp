@@ -3,13 +3,13 @@
 #include <windows.h>
 using namespace std;
 
-// Directions
+
 const char DIR_UP = 'U';
 const char DIR_DOWN = 'D';
 const char DIR_LEFT = 'L';
 const char DIR_RIGHT = 'R';
 
-// Grid size constants
+
 const int GRID_WIDTH = 100;
 const int GRID_HEIGHT = 20;
 
@@ -87,7 +87,7 @@ public:
                 break;
         }
 
-        // Check grid boundaries
+
         if (head->pos.xCoord <= 0 || head->pos.xCoord >= GRID_WIDTH - 1 ||
             head->pos.yCoord <= 0 || head->pos.yCoord >= GRID_HEIGHT - 1) {
             return false;
@@ -140,7 +140,7 @@ public:
         cursorInfo.bVisible = false;
         SetConsoleCursorInfo(console, &cursorInfo);
 
-        // Initialize snake in middle of grid
+
         snake = new Snake(GRID_WIDTH / 2, GRID_HEIGHT / 2);
         score = 0;
         initializeGrid();
@@ -152,7 +152,7 @@ public:
     }
 
     void initializeGrid() {
-        // Initialize empty grid
+
         for (int i = 0; i < GRID_HEIGHT; i++) {
             for (int j = 0; j < GRID_WIDTH; j++) {
                 if (i == 0 || i == GRID_HEIGHT - 1 || j == 0 || j == GRID_WIDTH - 1) {
@@ -196,14 +196,14 @@ public:
     }
 
     void draw() {
-        // Clear grid (except borders)
+
         for (int i = 1; i < GRID_HEIGHT - 1; i++) {
             for (int j = 1; j < GRID_WIDTH - 1; j++) {
                 grid[i][j] = ' ';
             }
         }
 
-        // Update snake position in grid
+
         SnakeNode* current = snake->getHead();
         while (current != nullptr) {
             if (current->pos.xCoord > 0 && current->pos.xCoord < GRID_WIDTH - 1 &&
@@ -213,10 +213,10 @@ public:
             current = current->next;
         }
 
-        // Place food in grid
+
         grid[food.yCoord][food.xCoord] = FOOD;
 
-        // Draw entire grid
+        
         gotoxy(0, 0);
         for (int i = 0; i < GRID_HEIGHT; i++) {
             for (int j = 0; j < GRID_WIDTH; j++) {
