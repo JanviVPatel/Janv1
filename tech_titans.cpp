@@ -1,5 +1,6 @@
 #include <bits/stdc++.h>
 #include <conio.h>
+//i am using kbhit,system("cls"),getch() functions of this this file conio.h
 #include <windows.h>
 using namespace std;
 
@@ -254,7 +255,7 @@ public:
 
     void getInput() {
         //kbhit will return true if user will enter anything with keyboard 
-        //kbhit is the function of windows.h header file
+        //kbhit is the function of conio.h header file
         if (kbhit()) {
             int key = getch();
             if (key == 'w' || key == 'W') {
