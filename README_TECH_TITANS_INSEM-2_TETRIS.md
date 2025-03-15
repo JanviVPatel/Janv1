@@ -18,7 +18,8 @@ This is a classic Tetris implementation for Windows console. The game features c
 - **Left/Right Arrow**: Move the current piece horizontally
 - **Up Arrow**: Rotate the piece clockwise
 - **Down Arrow**: Soft drop (accelerate descent)
-- **Spacebar**: Hard drop (instant placement)
+- **Double-Spacebar**: Hard drop (instant placement)
+- **Spacebar**: To Pause The Game 
 - **ESC**: Quit the game
 - **R**: Restart after game over
 
@@ -75,7 +76,6 @@ This is a classic Tetris implementation for Windows console. The game features c
 - Some keyboard layouts may require different handling for arrow keys
 
 ## Future Improvements
-- Add pause functionality
 - Implement a hold piece feature
 - Add ghost piece to show where the current piece will land
 - Implement additional game modes (e.g., Marathon, Sprint, Ultra)
