@@ -6,6 +6,7 @@
 #include <random>
 #include <string>
 #include <limits.h>
+#include <fstream>
 
 // Constants
 const int GRID_WIDTH = 10;
@@ -25,7 +26,8 @@ const int COLOR_T = 5;  // Purple
 // Game state
 enum class GameState {
     PLAYING,
-    GAME_OVER
+    GAME_OVER,
+    RESTART
 };
 
 // Tetromino shapes
@@ -39,6 +41,11 @@ public:
         int x;
         int y;
     };
+
+    // Default constructor
+    Tetromino() : type(Type::O) {
+        initShape();
+    }
 
     Tetromino(Type type) : type(type) {
         initShape();
@@ -171,59 +178,75 @@ public:
 // The game class
 class TetrisGame {
 public:
-    TetrisGame() : 
-        grid(GRID_HEIGHT, std::vector<int>(GRID_WIDTH, 0)),
-        currentPiece(getRandomPiece()),
-        pieceX(GRID_WIDTH / 2 - 1),
-        pieceY(0),
-        score(0),
-        level(1),
-        linesCleared(0),
-        gameState(GameState::PLAYING),
-        fallSpeed(1000) // Initial falling speed in milliseconds
-    {
-        // Initialize random number generator
-        std::srand(static_cast<unsigned int>(std::time(nullptr)));
-        
+    TetrisGame() : currentPiece(getRandomPiece()), nextPiece(getRandomPiece()) {
         // Initialize console
         initConsole();
+        resetGame();
     }
-
+   
     ~TetrisGame() {
         // Restore console settings
         SetConsoleTextAttribute(consoleHandle, 7); // Reset to default color
     }
 
     void run() {
-        lastFallTime = GetTickCount();
-        bool exitRequested = false;
-        while (gameState == GameState::PLAYING &&  !exitRequested) {
-          //  DWORD frameStart = GetTickCount();
-            if (_kbhit()) {
-                int key = _getch();
-                if (key == 27) { // ESC key
-                    exitRequested = true;
-                    break;
-                }
-                handleInput();
-            }
-
-            // Check if it's time for the piece to fall
-            DWORD currentTime = GetTickCount();
-            if (currentTime - lastFallTime >= fallSpeed) {
-                movePieceDown();
-                lastFallTime = currentTime;
-            }
-
-            render();
-
-            Sleep(50);
-        }
-
+        bool exitGame = false;
         
+        while (!exitGame) {
+            gameState = GameState::PLAYING;
+            lastFallTime = GetTickCount();
+            
+            while (gameState == GameState::PLAYING) {
+                if (_kbhit()) {
+                    int key = _getch();
+                    if (key == 27) { // ESC key
+                        gameState = GameState::GAME_OVER;
+                        exitGame = true;
+                        break;
+                    }
+                    handleInput();
+                }
 
-        // Game over screen
-        renderGameOver();
+                // Check if it's time for the piece to fall
+                DWORD currentTime = GetTickCount();
+                if (currentTime - lastFallTime >= fallSpeed) {
+                    movePieceDown();
+                    lastFallTime = currentTime;
+                }
+
+                render();
+                Sleep(50);
+            }
+
+            if (gameState == GameState::GAME_OVER && !exitGame) {
+                // Save high score
+                saveHighScore();
+                
+                // Game over screen with restart option
+                renderGameOver();
+                
+                bool waitingForInput = true;
+                while (waitingForInput) {
+                    if (_kbhit()) {
+                        int key = _getch();
+                        if (key == 'r' || key == 'R') {
+                            waitingForInput = false;
+                            resetGame(); // Restart the game
+                            system("cls"); // Clear screen before new game
+                        }
+                        else if (key == 27) { // ESC to exit
+                            waitingForInput = false;
+                            exitGame = true;
+                        }
+                        else if (key == 'q' || key == 'Q') { // Q to quit
+                            waitingForInput = false;
+                            exitGame = true;
+                        }
+                    }
+                    Sleep(50);
+                }
+            }
+        }
     }
 
 private:
@@ -235,12 +258,13 @@ private:
     int pieceX, pieceY;
     
     // Next piece to appear
-    Tetromino nextPiece = getRandomPiece();
+    Tetromino nextPiece;
     
     // Game state variables
     int score;
     int level;
     int linesCleared;
+    int highScore;
     GameState gameState;
     int fallSpeed;
     DWORD lastFallTime;
@@ -255,18 +279,33 @@ private:
         cursorInfo.bVisible = false;
         SetConsoleCursorInfo(consoleHandle, &cursorInfo);
         
-       // COORD bufferSize = {SCREEN_WIDTH + 1, SCREEN_HEIGHT + 1};
-        //SetConsoleScreenBufferSize(consoleHandle, bufferSize);
-
-        // Set console size
-       // SMALL_RECT windowRect = {0, 0, SCREEN_WIDTH, SCREEN_HEIGHT};
-        //SetConsoleWindowInfo(consoleHandle, TRUE, &windowRect);
-         // Clear the screen at startup
-         system("cls");
-    
-         // Set text attributes to default
-         SetConsoleTextAttribute(consoleHandle, 7);
+        // Set text attributes to default
+        SetConsoleTextAttribute(consoleHandle, 7);
         
+        // Load high score
+        loadHighScore();
+    }
+    void resetGame() {
+        // Clear the grid
+        grid = std::vector<std::vector<int>>(GRID_HEIGHT, std::vector<int>(GRID_WIDTH, 0));
+        
+        // Reset game variables
+        currentPiece = getRandomPiece();
+        nextPiece = getRandomPiece();
+        pieceX = GRID_WIDTH / 2 - 1;
+        pieceY = 0;
+        score = 0;
+        level = 1;
+        linesCleared = 0;
+        gameState = GameState::PLAYING;
+        fallSpeed = 1000; // Initial falling speed in milliseconds
+        lastFallTime = GetTickCount();
+        
+        // Initialize random number generator
+        std::srand(static_cast<unsigned int>(std::time(nullptr)));
+        
+        // Clear screen
+        system("cls");
     }
 
     Tetromino getRandomPiece() {
@@ -401,7 +440,7 @@ private:
         }
     }
         return false;
-    }
+}
 
     void lockPiece() {
         for (const auto& pos : currentPiece.getGlobalPositions(pieceX, pieceY)) {
@@ -489,31 +528,24 @@ private:
 
     void render() {
         // Clear the screen
-        //system("cls");
         COORD topLeft = {0, 0};
-        //CONSOLE_SCREEN_BUFFER_INFO screenInfo;
-        //GetConsoleScreenBufferInfo(consoleHandle, &screenInfo);
-        //DWORD cellsWritten;
-        //FillConsoleOutputCharacter(consoleHandle, ' ', screenInfo.dwSize.X * screenInfo.dwSize.Y, topLeft, &cellsWritten);
-        //FillConsoleOutputAttribute(consoleHandle, 7, screenInfo.dwSize.X * screenInfo.dwSize.Y, topLeft, &cellsWritten);
         SetConsoleCursorPosition(consoleHandle, topLeft);
-        // Draw the border and grid
-        drawBorder();
+                // Draw the border and grid
+                drawBorder();
         
-        // Draw the current piece
-        drawCurrentPiece();
-        
-        // Draw next piece preview
-        drawNextPiece();
-        
-        // Draw score and level information
-        drawInfo();
-        // Ensure cursor is in a safe position after all drawing
-        COORD safePos = {0, GRID_HEIGHT + 3};
-        SetConsoleCursorPosition(consoleHandle, safePos);
-        // Move cursor away from the play field
-       // SetConsoleCursorPosition(consoleHandle, {0, SCREEN_HEIGHT - 1});
-    }
+                // Draw the current piece
+                drawCurrentPiece();
+                
+                // Draw next piece preview
+                drawNextPiece();
+                
+                // Draw score and level information
+                drawInfo();
+                
+                // Ensure cursor is in a safe position after all drawing
+                COORD safePos = {0, GRID_HEIGHT + 3};
+                SetConsoleCursorPosition(consoleHandle, safePos);
+            }
 
     void drawBorder() {
         // Top border
@@ -636,39 +668,42 @@ void drawInfo() {
     SetConsoleTextAttribute(consoleHandle, 11);
     setCursorPosition(infoX, infoY);
     std::cout << "CURRENT SCORE: " << score;
-    
+
     setCursorPosition(infoX, infoY + 1);
-    std::cout << "LEVEL: " << level;
+    std::cout << "HIGH SCORE: " << highScore;
     
     setCursorPosition(infoX, infoY + 2);
+    std::cout << "LEVEL: " << level;
+    
+    setCursorPosition(infoX, infoY + 3);
     std::cout << "LINES: " << linesCleared;
     
     // Draw controls
-    setCursorPosition(infoX, infoY + 4);
+    setCursorPosition(infoX, infoY + 5);
     SetConsoleTextAttribute(consoleHandle, 2);
     std::cout << "CONTROLS:---";
     std::cout << "\n";
-    setCursorPosition(infoX, infoY + 5);
+    setCursorPosition(infoX, infoY + 6);
     SetConsoleTextAttribute(consoleHandle, 6);
     std::cout << "<-- / -->  :- ";
     SetConsoleTextAttribute(consoleHandle, 12); 
     std::cout << "To Move Left and Right";
-    setCursorPosition(infoX, infoY + 6);
+    setCursorPosition(infoX, infoY + 7);
     SetConsoleTextAttribute(consoleHandle, 6);
     std::cout << "Up Key :- ";
     SetConsoleTextAttribute(consoleHandle, 12);
     std::cout << "To Rotate";
-    setCursorPosition(infoX, infoY + 7);
+    setCursorPosition(infoX, infoY + 8);
     SetConsoleTextAttribute(consoleHandle, 6);
     std::cout << "Down Key :- ";
     SetConsoleTextAttribute(consoleHandle, 12);
     std::cout<< "To Soft Drop";
-    setCursorPosition(infoX, infoY + 8);
+    setCursorPosition(infoX, infoY + 9);
     SetConsoleTextAttribute(consoleHandle, 6);
     std::cout << "Double-Space Key :- ";
     SetConsoleTextAttribute(consoleHandle, 12);
     std::cout << "To Hard Drop";
-    setCursorPosition(infoX, infoY + 9);
+    setCursorPosition(infoX, infoY + 10);
     SetConsoleTextAttribute(consoleHandle, 6);
     std::cout << "ESC Key:- ";
     SetConsoleTextAttribute(consoleHandle, 12);
@@ -690,18 +725,53 @@ void renderGameOver() {
      SetConsoleTextAttribute(consoleHandle, 13); // Reset color
      std::cout << "Final Score: " << score;
      
-     // Exit instruction message
+    // High Score message
      setCursorPosition(messageX, messageY + 2);
-     SetConsoleTextAttribute(consoleHandle, 14);
-     std::cout << "Press any key to exit...";
-     
-     _getch(); // Wait for a key press
-}
+     SetConsoleTextAttribute(consoleHandle, 14); // Yellow
+      if (score > highScore) {
+        std::cout << "NEW HIGH SCORE!";
+       } else {
+        std::cout << "High Score: " << highScore;
+        }
+     std::cout << "\n\n";
+    // Restart option
+    setCursorPosition(messageX, messageY + 3);
+    SetConsoleTextAttribute(consoleHandle, 10); // Light green
+    std::cout << "Press 'R' to restart\n";
+    SetConsoleTextAttribute(consoleHandle, 12);//red
+    std::cout << " 'ESC' / 'Q' to quit...";
+    }
 
-void setCursorPosition(int x, int y) {
+   void setCursorPosition(int x, int y) {
     COORD coord = {static_cast<SHORT>(x), static_cast<SHORT>(y)};
     SetConsoleCursorPosition(consoleHandle, coord);
-}
+   }
+
+   void saveHighScore() {
+    // Update high score if current score is higher
+    if (score > highScore) {
+        highScore = score;
+        
+        // Save to file
+        std::ofstream file("tetris_highscore.txt");
+        if (file.is_open()) {
+            file << highScore;
+            file.close();
+        }
+    }
+  }
+
+  void loadHighScore() {
+    // Default high score is 0
+    highScore = 0;
+    
+    // Try to load from file
+    std::ifstream file("tetris_highscore.txt");
+    if (file.is_open()) {
+        file >> highScore;
+        file.close();
+      }
+    }
 };
 int main() {
     // Set console handle for the title screen
@@ -854,5 +924,7 @@ int main() {
     
     return 0;
 }
+
+
 
 
