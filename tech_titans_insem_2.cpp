@@ -219,11 +219,15 @@ public:
             }
 
             if (gameState == GameState::GAME_OVER && !exitGame) {
+                // Check if we have a new high score BEFORE saving it
+                 bool isNewHighScore = (score > highScore);
+
                 // Save high score
                 saveHighScore();
                 
-                // Game over screen with restart option
-                renderGameOver();
+              // Game over screen with restart option - pass the highscore flag
+              renderGameOver(isNewHighScore);
+    
                 
                 bool waitingForInput = true;
                 while (waitingForInput) {
@@ -710,7 +714,7 @@ void drawInfo() {
     std::cout << "To Quit";
 }
 
-void renderGameOver() {
+void renderGameOver(bool isNewHighScore) {
      // Position game over messages at the bottom of the grid
      int messageX = 1;  // Starting from the left edge of the grid
      int messageY = GRID_HEIGHT + 2;  // Just below the grid's bottom border
@@ -725,21 +729,21 @@ void renderGameOver() {
      SetConsoleTextAttribute(consoleHandle, 13); // Reset color
      std::cout << "Final Score: " << score;
      
-    // High Score message
+     // High Score message
      setCursorPosition(messageX, messageY + 2);
      SetConsoleTextAttribute(consoleHandle, 14); // Yellow
-      if (score > highScore) {
-        std::cout << "NEW HIGH SCORE!";
-       } else {
-        std::cout << "High Score: " << highScore;
-        }
+     if (isNewHighScore) {
+         std::cout << "NEW HIGH SCORE!";
+     } else {
+         std::cout << "High Score: " << highScore;
+     }
      std::cout << "\n\n";
     // Restart option
     setCursorPosition(messageX, messageY + 3);
     SetConsoleTextAttribute(consoleHandle, 10); // Light green
     std::cout << "Press 'R' to restart\n";
     SetConsoleTextAttribute(consoleHandle, 12);//red
-    std::cout << " 'ESC' / 'Q' to quit...";
+    std::cout << "'ESC' / 'Q' to quit...";
     }
 
    void setCursorPosition(int x, int y) {
