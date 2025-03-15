@@ -218,7 +218,7 @@ public:
                 Sleep(50);
             }
 
-            if (gameState == GameState::GAME_OVER && !exitGame) {
+            if (gameState == GameState::GAME_OVER) {
                 // Check if we have a new high score BEFORE saving it
                  bool isNewHighScore = (score > highScore);
 
