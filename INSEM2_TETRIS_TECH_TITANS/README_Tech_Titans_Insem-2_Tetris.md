@@ -41,6 +41,9 @@ This is a classic Tetris implementation for Windows console. The game features c
 4. **Piece Movement**: Each piece can be moved left, right, down, or rotated as it falls
 5. **Locking**: Pieces "lock" in place when they land on a surface or another block
 
+## Game DEMONSTRATION Video
+"C:\Users\janvi\Videos\Captures\tetris_insem_2.cpp - Visual Studio Code 2025-03-28 22-47-42.mp4"
+
 ## Technical Details
 - Written in C++ for Windows console
 - Uses the Windows API for console manipulation and input handling
