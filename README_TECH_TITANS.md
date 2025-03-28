@@ -128,8 +128,8 @@ TECH TITANS
 
 ## Group Member's Name
 
-1.Patel Janvi - 202401447
-2.Patel Shreya - 202401450
-3.Patel Vishwa - 202401451
-4.Vanshi Parikh - 202401443
+1.Patel Janvi - 202401447<br/>
+2.Patel Shreya - 202401450<br/>
+3.Patel Vishwa - 202401451<br/>
+4.Vanshi Parikh - 202401443<br/>
 
