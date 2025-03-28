@@ -84,3 +84,14 @@ This is a classic Tetris implementation for Windows console. The game features c
 ---
 
 Enjoy the game and aim for the highest score possible!
+
+## Group Name
+
+TECH TITANS
+
+## Group Member's Name
+
+1.Patel Janvi - 202401447
+2.Patel Shreya - 202401450
+3.Patel Vishwa - 202401451
+4.Vanshi Parikh - 202401443
