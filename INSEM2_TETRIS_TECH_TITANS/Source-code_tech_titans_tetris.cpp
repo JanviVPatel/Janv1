@@ -7,7 +7,7 @@
 #include <string>
 #include <limits.h>
 #include <fstream>
-
+using namespace std;
 // Constants
 const int GRID_WIDTH = 10;
 const int GRID_HEIGHT = 20;
@@ -120,7 +120,7 @@ public:
         // Skip rotation for O piece (square) since it looks the same
         if (type == Type::O) return;
 
-        std::vector<Position> rotated;
+        vector<Position> rotated;
         
         // Find center of rotation
         int minX = INT_MAX, maxX = INT_MIN;
@@ -162,8 +162,8 @@ public:
     shape = rotated;
 }
 
-    std::vector<Position> getGlobalPositions(int offsetX, int offsetY) const {
-        std::vector<Position> global;
+    vector<Position> getGlobalPositions(int offsetX, int offsetY) const {
+    vector<Position> global;
         for (const auto& block : shape) {
             global.push_back({block.x + offsetX, block.y + offsetY});
         }
@@ -171,7 +171,7 @@ public:
     }
 
     Type type;
-    std::vector<Position> shape;
+    vector<Position> shape;
     int color;
 };
 
@@ -227,8 +227,6 @@ public:
                 
               // Game over screen with restart option - pass the highscore flag
               renderGameOver(isNewHighScore);
-    
-                
                 bool waitingForInput = true;
                 while (waitingForInput) {
                     if (_kbhit()) {
@@ -255,7 +253,7 @@ public:
 
 private:
     // Game grid (0 = empty, other values = filled with color)
-    std::vector<std::vector<int>> grid;
+    vector<std::vector<int>> grid;
     
     // Current falling piece
     Tetromino currentPiece;
@@ -291,7 +289,7 @@ private:
     }
     void resetGame() {
         // Clear the grid
-        grid = std::vector<std::vector<int>>(GRID_HEIGHT, std::vector<int>(GRID_WIDTH, 0));
+        grid = vector<vector<int>>(GRID_HEIGHT,vector<int>(GRID_WIDTH, 0));
         
         // Reset game variables
         currentPiece = getRandomPiece();
@@ -302,11 +300,11 @@ private:
         level = 1;
         linesCleared = 0;
         gameState = GameState::PLAYING;
-        fallSpeed = 1000; // Initial falling speed in milliseconds
+        fallSpeed = 1000; // Initial falling speed in milliseconds //sleep time
         lastFallTime = GetTickCount();
         
         // Initialize random number generator
-        std::srand(static_cast<unsigned int>(std::time(nullptr)));
+        srand(static_cast<unsigned int>(time(nullptr)));
         
         // Clear screen
         system("cls");
@@ -314,7 +312,7 @@ private:
 
     Tetromino getRandomPiece() {
         // Create a random tetromino
-        int randPiece = std::rand() % 7;
+        int randPiece = rand() % 7;
         return Tetromino(static_cast<Tetromino::Type>(randPiece));
     }
 
@@ -555,41 +553,41 @@ private:
         // Top border
         SetConsoleTextAttribute(consoleHandle, 7); // Reset color
         setCursorPosition(0, 0);
-        std::cout << "*";
+        cout << "*";
         for (int i = 0; i < GRID_WIDTH * 2; i++) {
-            std::cout << "*";
+            cout << "*";
         }
-        std::cout << "*";
+        cout << "*";
         
         // Side borders and grid
         for (int y = 0; y < GRID_HEIGHT; y++) {
             setCursorPosition(0, y + 1);
-            std::cout << "*";
+            cout << "*";
             
             for (int x = 0; x < GRID_WIDTH; x++) {
                 // Draw cell based on grid value
                 int cellValue = grid[y][x];
                 if (cellValue != 0) {
                     SetConsoleTextAttribute(consoleHandle, cellValue);
-                    std::cout <<char(219) << char(219); 
+                    cout <<char(219) << char(219); 
                 } else {
                     SetConsoleTextAttribute(consoleHandle, 8); // Dark gray for empty cells
-                    std::cout << "  ";
+                    cout << "  ";
                 }
             }
             
             SetConsoleTextAttribute(consoleHandle, 7); // Reset color
-            std::cout << "*";
+            cout << "*";
         }
         
 
         // Bottom border
     setCursorPosition(0, GRID_HEIGHT + 1);
-    std::cout << "*";
+    cout << "*";
     for (int i = 0; i < GRID_WIDTH * 2; i++) {
-        std::cout << "*";
+        cout << "*";
     }
-    std::cout << "*";
+    cout << "*";
 }
 
 void drawCurrentPiece() {
@@ -598,7 +596,7 @@ void drawCurrentPiece() {
     for (const auto& pos : currentPiece.getGlobalPositions(pieceX, pieceY)) {
         if (pos.y >= 0 && pos.y < GRID_HEIGHT && pos.x >= 0 && pos.x < GRID_WIDTH) {
             setCursorPosition(pos.x * 2 + 1, pos.y + 1);
-            std::cout <<char(219) << char(219); 
+            cout <<char(219) << char(219); 
         }
     }
         // Important: Reset cursor position after drawing the piece
@@ -614,15 +612,15 @@ void drawNextPiece() {
       
       SetConsoleTextAttribute(consoleHandle, 13);
       setCursorPosition(previewX, previewY - 2);
-      std::cout << "Next Piece:";
+      cout << "Next Piece:";
       setCursorPosition(previewX, previewY);
-      std::cout << "*************";
+      cout << "*************";
       for (int y = 0; y < 4; y++) {
           setCursorPosition(previewX, previewY + y + 1);
-          std::cout << "*           *";
+          cout << "*           *";
       }
       setCursorPosition(previewX, previewY + 5);
-      std::cout << "*************";
+      cout << "*************";
       
       // Draw the next piece in the preview box
       SetConsoleTextAttribute(consoleHandle, nextPiece.color);
@@ -641,10 +639,10 @@ void drawNextPiece() {
           int minY = INT_MAX, maxY = INT_MIN;
           
           for (const auto& block : nextPiece.shape) {
-              minX = std::min(minX, block.x);
-              maxX = std::max(maxX, block.x);
-              minY = std::min(minY, block.y);
-              maxY = std::max(maxY, block.y);
+              minX = min(minX, block.x);
+              maxX = max(maxX, block.x);
+              minY = min(minY, block.y);
+              maxY = max(maxY, block.y);
           }
           
           int width = maxX - minX + 1;
@@ -659,7 +657,7 @@ void drawNextPiece() {
       
       for (const auto& pos : nextPiece.shape) {
           setCursorPosition(centerX + pos.x * 2 - 3 + offsetX * 2, centerY + pos.y - 1 + offsetY);
-          std::cout << char(219) << char(219); 
+          cout << char(219) << char(219); 
       }
       
       SetConsoleTextAttribute(consoleHandle, 7); // Reset color
@@ -671,52 +669,52 @@ void drawInfo() {
     
     SetConsoleTextAttribute(consoleHandle, 11);
     setCursorPosition(infoX, infoY);
-    std::cout << "CURRENT SCORE: " << score;
+    cout << "CURRENT SCORE: " << score;
 
     setCursorPosition(infoX, infoY + 1);
-    std::cout << "HIGH SCORE: " << highScore;
+    cout << "HIGH SCORE: " << highScore;
     
     setCursorPosition(infoX, infoY + 2);
-    std::cout << "LEVEL: " << level;
+    cout << "LEVEL: " << level;
     
     setCursorPosition(infoX, infoY + 3);
-    std::cout << "LINES: " << linesCleared;
+    cout << "LINES: " << linesCleared;
     
     // Draw controls
     setCursorPosition(infoX, infoY + 5);
     SetConsoleTextAttribute(consoleHandle, 2);
-    std::cout << "CONTROLS:---";
-    std::cout << "\n";
+    cout << "CONTROLS:---";
+    cout << "\n";
     setCursorPosition(infoX, infoY + 6);
     SetConsoleTextAttribute(consoleHandle, 6);
-    std::cout << "<-- / -->  :- ";
+    cout << "<-- / -->  :- ";
     SetConsoleTextAttribute(consoleHandle, 12); 
-    std::cout << "To Move Left and Right";
+    cout << "To Move Left and Right";
     setCursorPosition(infoX, infoY + 7);
     SetConsoleTextAttribute(consoleHandle, 6);
-    std::cout << "Up Key :- ";
+    cout << "Up Key :- ";
     SetConsoleTextAttribute(consoleHandle, 12);
-    std::cout << "To Rotate";
+    cout << "To Rotate";
     setCursorPosition(infoX, infoY + 8);
     SetConsoleTextAttribute(consoleHandle, 6);
-    std::cout << "Down Key :- ";
+    cout << "Down Key :- ";
     SetConsoleTextAttribute(consoleHandle, 12);
-    std::cout<< "To Soft Drop";
+    cout<< "To Soft Drop";
     setCursorPosition(infoX, infoY + 9);
     SetConsoleTextAttribute(consoleHandle, 6);
-    std::cout << "Double-Spacebar Key :- ";
+    cout << "Double-Spacebar Key :- ";
     SetConsoleTextAttribute(consoleHandle, 12);
-    std::cout << "To Hard Drop";
+    cout << "To Hard Drop";
     setCursorPosition(infoX, infoY + 10);
     SetConsoleTextAttribute(consoleHandle, 6);
-    std::cout << "Spacebar Key :- ";
+    cout << "Spacebar Key :- ";
     SetConsoleTextAttribute(consoleHandle, 12);
-    std::cout << "To Pause the Game";
+    cout << "To Pause the Game";
     setCursorPosition(infoX, infoY + 11);
     SetConsoleTextAttribute(consoleHandle, 6);
-    std::cout << "ESC Key/Press 'Q/q':- ";
+    cout << "ESC Key/Press 'Q/q':- ";
     SetConsoleTextAttribute(consoleHandle, 12);
-    std::cout << "To Quit";
+    cout << "To Quit";
 }
 
 void renderGameOver(bool isNewHighScore) {
@@ -727,28 +725,28 @@ void renderGameOver(bool isNewHighScore) {
      // Game Over message
      setCursorPosition(messageX, messageY);
      SetConsoleTextAttribute(consoleHandle, 12); // Light red
-     std::cout << "Game Over!";
+     cout << "Game Over!";
      
      // Final Score message
      setCursorPosition(messageX, messageY + 1);
      SetConsoleTextAttribute(consoleHandle, 13); // Reset color
-     std::cout << "Final Score: " << score;
+     cout << "Final Score: " << score;
      
      // High Score message
      setCursorPosition(messageX, messageY + 2);
      SetConsoleTextAttribute(consoleHandle, 14); // Yellow
      if (isNewHighScore) {
-         std::cout << "NEW HIGH SCORE!";
+         cout << "NEW HIGH SCORE!";
      } else {
-         std::cout << "High Score: " << highScore;
+         cout << "High Score: " << highScore;
      }
-     std::cout << "\n\n";
+     cout << "\n\n";
     // Restart option
     setCursorPosition(messageX, messageY + 3);
     SetConsoleTextAttribute(consoleHandle, 10); // Light green
-    std::cout << "Press 'R' to restart\n";
+    cout << "Press 'R' to restart\n";
     SetConsoleTextAttribute(consoleHandle, 12);//red
-    std::cout << "'ESC' / 'Q' to quit...";
+    cout << "'ESC' / 'Q' to quit...";
     }
 
    void setCursorPosition(int x, int y) {
@@ -762,7 +760,7 @@ void renderGameOver(bool isNewHighScore) {
         highScore = score;
         
         // Save to file
-        std::ofstream file("tetris_highscore.txt");
+        ofstream file("tetris_highscore.txt");
         if (file.is_open()) {
             file << highScore;
             file.close();
@@ -775,7 +773,7 @@ void renderGameOver(bool isNewHighScore) {
     highScore = 0;
     
     // Try to load from file
-    std::ifstream file("tetris_highscore.txt");
+    ifstream file("tetris_highscore.txt");
     if (file.is_open()) {
         file >> highScore;
         file.close();
@@ -845,114 +843,114 @@ int main() {
     
     // Print the TETRIS title
     SetConsoleTextAttribute(consoleHandle, 1); // Dark Blue
-    std::cout << "\n\n";
+    cout << "\n\n";
     
     // Print each row of the letters
     for (int row = 0; row < 5; row++) {
         // Print left padding to center the text
-        std::string padding(leftPadding, ' ');
-        std::cout << padding;
+        string padding(leftPadding, ' ');
+        cout << padding;
         
         // Print T
         for (int col = 0; col < 5; col++) {
-            if (T[row][col]) std::cout << block << block;
-            else std::cout << "  ";
+            if (T[row][col]) cout << block << block;
+            else cout << "  ";
         }
-        std::cout << "  ";
+        cout << "  ";
         
         // Print E
         for (int col = 0; col < 5; col++) {
-            if (E[row][col]) std::cout << block << block;
-            else std::cout << "  ";
+            if (E[row][col]) cout << block << block;
+            else cout << "  ";
         }
-        std::cout << "  ";
+        cout << "  ";
         
         // Print T
         for (int col = 0; col < 5; col++) {
-            if (T[row][col]) std::cout << block << block;
-            else std::cout << "  ";
+            if (T[row][col]) cout << block << block;
+            else cout << "  ";
         }
-        std::cout << "  ";
+        cout << "  ";
         
         // Print R
         for (int col = 0; col < 5; col++) {
-            if (R[row][col]) std::cout << block << block;
-            else std::cout << "  ";
+            if (R[row][col]) cout << block << block;
+            else cout << "  ";
         }
-        std::cout << "  ";
+        cout << "  ";
         
         // Print I
         for (int col = 0; col < 5; col++) {
-            if (I[row][col]) std::cout << block << block;
-            else std::cout << "  ";
+            if (I[row][col]) cout << block << block;
+            else cout << "  ";
         }
-        std::cout << "  ";
+        cout << "  ";
         
         // Print S
         for (int col = 0; col < 5; col++) {
-            if (S[row][col]) std::cout << block << block;
-            else std::cout << "  ";
+            if (S[row][col]) cout << block << block;
+            else cout << "  ";
         }
-        std::cout << "\n";
+        cout << "\n";
     }
     
-    std::cout << "\n\n";
+    cout << "\n\n";
     
     // Calculate width of instruction box
     const int instructionBoxWidth = 44; // Based on your longest line of text
     leftPadding = (consoleWidth - instructionBoxWidth) / 2;
     if (leftPadding < 0) leftPadding = 0;
     
-    std::string instructionPadding(leftPadding, ' ');
+    string instructionPadding(leftPadding, ' ');
     
     // Border for instructions
     SetConsoleTextAttribute(consoleHandle, 13); // Bright Pink/Magenta
-    std::cout << instructionPadding << "+------------------------------------------+\n";
-    std::cout << instructionPadding << "|              HOW TO PLAY                 |\n";
-    std::cout << instructionPadding << "+------------------------------------------+\n\n";
+    cout << instructionPadding << "+------------------------------------------+\n";
+    cout << instructionPadding << "|              HOW TO PLAY                 |\n";
+    cout << instructionPadding << "+------------------------------------------+\n\n";
     SetConsoleTextAttribute(consoleHandle, 2);
-    std::cout << instructionPadding << "Controls:\n";
+    cout << instructionPadding << "Controls:\n";
     SetConsoleTextAttribute(consoleHandle, 11);
-    std::cout << instructionPadding << "  Left/Right Arrow: ";
+    cout << instructionPadding << "  Left/Right Arrow: ";
     SetConsoleTextAttribute(consoleHandle, 12);
-    std::cout<<"Move piece\n";
+    cout<<"Move piece\n";
     SetConsoleTextAttribute(consoleHandle, 11);
-    std::cout << instructionPadding << "  Up Arrow: ";
+    cout << instructionPadding << "  Up Arrow: ";
     SetConsoleTextAttribute(consoleHandle, 12);
-    std::cout<<"Rotate piece\n";
+    cout<<"Rotate piece\n";
     SetConsoleTextAttribute(consoleHandle, 11);
-    std::cout << instructionPadding << "  Down Arrow: ";
+    cout << instructionPadding << "  Down Arrow: ";
     SetConsoleTextAttribute(consoleHandle, 12);
-    std::cout << "Soft drop\n";
+    cout << "Soft drop\n";
     SetConsoleTextAttribute(consoleHandle, 11);
-    std::cout << instructionPadding << "  Double-Spacebar key: ";
+    cout << instructionPadding << "  Double-Spacebar key: ";
     SetConsoleTextAttribute(consoleHandle, 12);
-    std::cout << "Hard drop\n";
+    cout << "Hard drop\n";
     SetConsoleTextAttribute(consoleHandle, 11);
-    std::cout << instructionPadding << "  Spacebar key: ";
+    cout << instructionPadding << "  Spacebar key: ";
     SetConsoleTextAttribute(consoleHandle, 12);
-    std::cout << "To Pause the Game\n";
+    cout << "To Pause the Game\n";
     SetConsoleTextAttribute(consoleHandle, 11);
-    std::cout << instructionPadding << "  ESC: ";
+    cout << instructionPadding << "  ESC: ";
     SetConsoleTextAttribute(consoleHandle, 12);
-    std::cout << "Quit game\n";
-    std::cout << "\n";
+    cout << "Quit game\n";
+    cout << "\n";
     SetConsoleTextAttribute(consoleHandle, 13);
-    std::cout << instructionPadding <<"LEVEL WILL INCREASE AFTER EVERY 5 LINES.....\n\n";
+    cout << instructionPadding <<"LEVEL WILL INCREASE AFTER EVERY 5 LINES.....\n\n";
     SetConsoleTextAttribute(consoleHandle, 2);
-    std::cout << instructionPadding << "Scoring System:-\n";
+    cout << instructionPadding << "Scoring System:-\n";
     SetConsoleTextAttribute(consoleHandle, 11);
-    std::cout << instructionPadding << "If you clear 1 line in first level score will increase with 40.\n";
-    std::cout << instructionPadding << "If you clear 1 line in second level score will increase with 80.\n";
-    std::cout << instructionPadding << "If you clear 1 line in third level score will increase with 120.\n";
-    std::cout << instructionPadding << "If you clear 1 line in nth level score will increase with 40*n.\n\n";
+    cout << instructionPadding << "If you clear 1 line in first level score will increase with 40.\n";
+    cout << instructionPadding << "If you clear 1 line in second level score will increase with 80.\n";
+    cout << instructionPadding << "If you clear 1 line in third level score will increase with 120.\n";
+    cout << instructionPadding << "If you clear 1 line in nth level score will increase with 40*n.\n\n";
     SetConsoleTextAttribute(consoleHandle, 13);
-    std::cout << instructionPadding << "If you clear 1 line at once,score will increase with 40.\n";
-    std::cout << instructionPadding << "If you clear 2 line at once,score will increase with 100.\n";
-    std::cout << instructionPadding << "If you clear 3 line at once,score will increase with 300.\n";
-    std::cout << instructionPadding << "If you clear 4 line at once,score will increase with 1200.\n\n";
+    cout << instructionPadding << "If you clear 1 line at once,score will increase with 40.\n";
+    cout << instructionPadding << "If you clear 2 line at once,score will increase with 100.\n";
+    cout << instructionPadding << "If you clear 3 line at once,score will increase with 300.\n";
+    cout << instructionPadding << "If you clear 4 line at once,score will increase with 1200.\n\n";
     SetConsoleTextAttribute(consoleHandle, 2);
-    std::cout << instructionPadding << "Press any key to start...\n";
+    cout << instructionPadding << "Press any key to start...\n";
     
     _getch(); // Wait for a key press to start
     
