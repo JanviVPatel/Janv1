@@ -808,7 +808,7 @@ int main() {
         {1,0,0,0,1},
         {1,1,1,1,1},
         {1,0,1,0,0},
-        {1,0,0,1,0}
+        {1,0,0,1,1}
     };
     
     int S[5][5] = {
@@ -938,10 +938,20 @@ int main() {
     std::cout << "Quit game\n";
     std::cout << "\n";
     SetConsoleTextAttribute(consoleHandle, 13);
-    std::cout << instructionPadding <<"LEVEL WILL INCREASE AFTER EVERY 5 LINES.....";
-
+    std::cout << instructionPadding <<"LEVEL WILL INCREASE AFTER EVERY 5 LINES.....\n\n";
     SetConsoleTextAttribute(consoleHandle, 2);
-    std::cout << "\n";std::cout << "\n";
+    std::cout << instructionPadding << "Scoring System:-\n";
+    SetConsoleTextAttribute(consoleHandle, 11);
+    std::cout << instructionPadding << "If you clear 1 line in first level score will increase with 40.\n";
+    std::cout << instructionPadding << "If you clear 1 line in second level score will increase with 80.\n";
+    std::cout << instructionPadding << "If you clear 1 line in third level score will increase with 120.\n";
+    std::cout << instructionPadding << "If you clear 1 line in nth level score will increase with 40*n.\n\n";
+    SetConsoleTextAttribute(consoleHandle, 13);
+    std::cout << instructionPadding << "If you clear 1 line at once,score will increase with 40.\n";
+    std::cout << instructionPadding << "If you clear 2 line at once,score will increase with 100.\n";
+    std::cout << instructionPadding << "If you clear 3 line at once,score will increase with 300.\n";
+    std::cout << instructionPadding << "If you clear 4 line at once,score will increase with 1200.\n\n";
+    SetConsoleTextAttribute(consoleHandle, 2);
     std::cout << instructionPadding << "Press any key to start...\n";
     
     _getch(); // Wait for a key press to start
